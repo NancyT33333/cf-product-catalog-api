@@ -1,0 +1,7 @@
+---
+applications:
+- name: productcatalog
+ memory: 512M
+ buildpack: nodejs_buildpack
+services:
+ - demoDB

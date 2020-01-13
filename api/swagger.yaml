@@ -1,0 +1,202 @@
+---
+swagger: "2.0"
+info:
+  description: "Your first microservice using an API First approach"
+  version: "1.0.0"
+  title: "Products Catalog API"
+  x-targetEndpoint: "http://localhost:8080/api/v1"
+host: "localhost:8080"
+# "s0020975491trial-trial.apim1.hanatrial.ondemand.com:443" 
+basePath: "/api/v1"
+schemes:
+- "http"
+paths:
+  /products:
+    get:
+      tags:
+      - "Products"
+      description: "Gets list of Products"
+      operationId: "productsGET"
+      parameters:
+      - name: "$top"
+        in: "query"
+        description: "Limits the number of returned results"
+        required: false
+        type: "number"
+        format: "int32"
+      - name: "$skip"
+        in: "query"
+        description: "Offset to the no of parameters to skip"
+        required: false
+        type: "number"
+        format: "int32"
+      responses:
+        "200":
+          description: "List of Products"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/product"
+        "500":
+          description: "Server error"
+          schema:
+            $ref: "#/definitions/error"
+      x-swagger-router-controller: "Products"
+    post:
+      tags:
+      - "Products"
+      description: "Create Product"
+      operationId: "productsPOST"
+      parameters:
+      - in: "body"
+        name: "payload"
+        description: "Product payload"
+        required: true
+        schema:
+          $ref: "#/definitions/product"
+      responses:
+        "201":
+          description: "Product created Successfully"
+          schema:
+            $ref: "#/definitions/product"
+        "500":
+          description: "Server error"
+          schema:
+            $ref: "#/definitions/error"
+      x-swagger-router-controller: "Products"
+  /products/{id}:
+    get:
+      tags:
+      - "Products"
+      description: "Get the product by id"
+      operationId: "productsIdGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Product for given product id"
+          schema:
+            $ref: "#/definitions/product"
+        "404":
+          description: "Item not found"
+          schema:
+            $ref: "#/definitions/error"
+        "500":
+          description: "Server error"
+          schema:
+            $ref: "#/definitions/error"
+      x-swagger-router-controller: "Products"
+    delete:
+      tags:
+      - "Products"
+      description: "Delete the selected product"
+      operationId: "productsIdDELETE"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "204":
+          description: "Product deleted Successfully"
+        "404":
+          description: "Item not found"
+          schema:
+            $ref: "#/definitions/error"
+        "500":
+          description: "Server error"
+          schema:
+            $ref: "#/definitions/error"
+      x-swagger-router-controller: "Products"
+definitions:
+  error:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        description: "Error code"
+      message:
+        type: "string"
+        description: "Error message"
+      description:
+        type: "string"
+        description: "Detailed Error Description"
+  price:
+    type: "object"
+    properties:
+      value:
+        type: "number"
+        format: "double"
+        example: 33.99
+        title: "Product price"
+      currency:
+        type: "string"
+        example: "EUR"
+        title: "Currency unit"
+        enum:
+        - "USD"
+        - "EUR"
+    example:
+      currency: "EUR"
+      value: 33.99
+  availability:
+    type: "object"
+    properties:
+      availableAmount:
+        type: "integer"
+        example: 530
+        title: "Available product quantity"
+      warehouseId:
+        type: "string"
+        example: "890"
+        title: "Warehouse Identifer"
+    example:
+      availableAmount: 530
+      warehouseId: "890"
+  product:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: "123"
+        description: "Product Id"
+      name:
+        type: "string"
+        example: "KittyFood"
+        description: "Product name"
+      description:
+        type: "string"
+        example: "Tasty Kitty food"
+        description: "Product description"
+      price:
+        $ref: "#/definitions/price"
+      availability:
+        $ref: "#/definitions/availability"
+    example:
+      price:
+        currency: "EUR"
+        value: 33.99
+      name: "KittyFood"
+      description: "Tasty Kitty food"
+      id: "123"
+      availability:
+        availableAmount: 530
+        warehouseId: "890"
+parameters:
+  limitParam:
+    name: "$top"
+    in: "query"
+    description: "Limits the number of returned results"
+    required: false
+    type: "number"
+    format: "int32"
+  offsetParam:
+    name: "$skip"
+    in: "query"
+    description: "Offset to the no of parameters to skip"
+    required: false
+    type: "number"
+    format: "int32"
